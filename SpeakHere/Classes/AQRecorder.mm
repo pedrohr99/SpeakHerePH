@@ -48,6 +48,7 @@ Copyright (C) 2012 Apple Inc. All Rights Reserved.
 */
 
 #include "AQRecorder.h"
+#import <AVFoundation/AVFoundation.h>
 
 // ____________________________________________________________________________________
 // Determine the size, in bytes, of a buffer necessary to represent the supplied number
@@ -158,6 +159,9 @@ void AQRecorder::SetupAudioFormat(UInt32 inFormatID)
 {
 	memset(&mRecordFormat, 0, sizeof(mRecordFormat));
 
+    
+    /*
+     * Code deprecated in iOS 7
 	UInt32 size = sizeof(mRecordFormat.mSampleRate);
 	XThrowIfError(AudioSessionGetProperty(	kAudioSessionProperty_CurrentHardwareSampleRate,
 										&size, 
@@ -167,6 +171,13 @@ void AQRecorder::SetupAudioFormat(UInt32 inFormatID)
 	XThrowIfError(AudioSessionGetProperty(	kAudioSessionProperty_CurrentHardwareInputNumberChannels, 
 										&size, 
 										&mRecordFormat.mChannelsPerFrame), "couldn't get input channel count");
+     */
+    
+    // Getting sample rate and channels by AVAudioSession
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    mRecordFormat.mSampleRate = session.sampleRate;
+    mRecordFormat.mChannelsPerFrame = (unsigned int)session.inputNumberOfChannels;
+
 			
 	mRecordFormat.mFormatID = inFormatID;
 	if (inFormatID == kAudioFormatLinearPCM)

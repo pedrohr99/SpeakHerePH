@@ -20,6 +20,8 @@
 		2BC3DD9015AB896400B0B61B /* CAXException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3DD8C15AB896400B0B61B /* CAXException.cpp */; };
 		2BC3DD9215AB8AA100B0B61B /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC3DD9115AB8AA100B0B61B /* CoreAudio.framework */; };
 		4F30FEF118957F48003DAB3E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F30FEF018957F48003DAB3E /* Default-568h@2x.png */; };
+		4F30FEF318958033003DAB3E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4F30FEF218958033003DAB3E /* README.md */; };
+		4F30FEF51895807E003DAB3E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F30FEF41895807E003DAB3E /* AVFoundation.framework */; };
 		AFC29B3C11D568A1006F150F /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = AFC29B3511D568A1006F150F /* Icon-72.png */; };
 		AFC29B3D11D568A1006F150F /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = AFC29B3611D568A1006F150F /* Icon-Small-50.png */; };
 		AFC29B3E11D568A1006F150F /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = AFC29B3711D568A1006F150F /* Icon-Small.png */; };
@@ -66,6 +68,8 @@
 		2BC3DD9115AB8AA100B0B61B /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* SpeakHere_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeakHere_Prefix.pch; sourceTree = "<group>"; };
 		4F30FEF018957F48003DAB3E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		4F30FEF218958033003DAB3E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		4F30FEF41895807E003DAB3E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		AFC29B3511D568A1006F150F /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "Images/Icon-72.png"; sourceTree = "<group>"; };
 		AFC29B3611D568A1006F150F /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "Images/Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F30FEF51895807E003DAB3E /* AVFoundation.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -143,6 +148,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				4F30FEF218958033003DAB3E /* README.md */,
 				4F30FEF018957F48003DAB3E /* Default-568h@2x.png */,
 				F73FE19D0F743C1900F0F3CC /* ReadMe.txt */,
 				F76949D90F40F32A006C6FBF /* AudioViews */,
@@ -191,6 +197,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4F30FEF41895807E003DAB3E /* AVFoundation.framework */,
 				2BC3DD9115AB8AA100B0B61B /* CoreAudio.framework */,
 				F7694A4C0F40F82A006C6FBF /* AudioToolbox.framework */,
 				F7694A4D0F40F82A006C6FBF /* CoreFoundation.framework */,
@@ -306,6 +313,7 @@
 				AFC29B3E11D568A1006F150F /* Icon-Small.png in Resources */,
 				AFC29B3F11D568A1006F150F /* Icon-Small@2x.png in Resources */,
 				AFC29B4011D568A1006F150F /* Icon.png in Resources */,
+				4F30FEF318958033003DAB3E /* README.md in Resources */,
 				AFC29B4111D568A1006F150F /* Icon@2x.png in Resources */,
 				AFC29B4211D568A1006F150F /* iTunesArtwork in Resources */,
 			);

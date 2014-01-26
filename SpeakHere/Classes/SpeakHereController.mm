@@ -48,6 +48,8 @@ Copyright (C) 2012 Apple Inc. All Rights Reserved.
 */
 
 #import "SpeakHereController.h"
+#import <AVFoundation/AVFoundation.h>
+#include "CAXException.h"
 
 @implementation SpeakHereController
 
@@ -125,23 +127,46 @@ char *OSTypeToStr(char *buf, OSType t)
 
 - (IBAction)play:(id)sender
 {
-	if (player->IsRunning())
-	{
-		if (playbackWasPaused) {
-			OSStatus result = player->StartQueue(true);
-            playbackWasPaused = NO;
-			if (result == noErr)
-				[[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueResumed" object:self];
-		}
-		else
-			[self stopPlayQueue];
-	}
-	else
-	{		
-		OSStatus result = player->StartQueue(false);
-		if (result == noErr)
-			[[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueResumed" object:self];
-	}
+    NSError *error = nil;
+    
+    // setting playback category for listen to audio track without mixing audio from other apps
+    try {
+        // an intance of AVAudioSession class
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        
+        // it changes category for listen to track
+        [session setCategory:AVAudioSessionCategoryPlayback error:&error];
+        XThrowIfError(error.code, "couldn't set playback audio category");
+        
+        // the session must be active
+        [session setActive:YES error:&error];
+        XThrowIfError(error.code, "couldn't set audio session active in playing\n");
+        
+    } catch (CAXException e) {
+        char buf[256];
+        fprintf(stderr, "Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
+    }
+    
+    if (!error) {
+        // play
+        if (player->IsRunning())
+        {
+            if (playbackWasPaused) {
+                OSStatus result = player->StartQueue(true);
+                playbackWasPaused = NO;
+                if (result == noErr)
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueResumed" object:self];
+            }
+            else
+                [self stopPlayQueue];
+        }
+        else
+        {
+            OSStatus result = player->StartQueue(false);
+            if (result == noErr)
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueResumed" object:self];
+        }
+    }
 }
 
 - (IBAction)record:(id)sender
@@ -152,19 +177,53 @@ char *OSTypeToStr(char *buf, OSType t)
 	}
 	else // If we're not recording, start.
 	{
-		btn_play.enabled = NO;	
-		
-		// Set the button's state to "stop"
-		btn_record.title = @"Stop";
-				
-		// Start the recorder
-		recorder->StartRecord(CFSTR("recordedFile.caf"));
-		
-		[self setFileDescriptionForFormat:recorder->DataFormat() withName:@"Recorded File"];
-		
-		// Hook the level meter up to the Audio Queue for the recorder
-		[lvlMeter_in setAq: recorder->Queue()];
-	}	
+        // an intance of AVAudioSession class
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        // we do not want to allow recording if input is not available
+        [session requestRecordPermission:^(BOOL granted) {
+            if (granted) {
+                
+                // microphone has permision to be used in this app
+                NSError *error;
+                // setting the category will also request access from the user
+                [session setCategory:AVAudioSessionCategoryRecord error:&error];
+                if (error)
+                    NSLog(@"Couldn't set record audio category. Error=%ld", (long)error);
+                
+                [session setActive:YES error:&error];
+                if (error)
+                    NSLog(@"AVAudioSession setActive:YES failed in recording. Erorr=%ld", (long)error);
+                
+            }else {
+                // Handle failure
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Microphone"
+                                                                    message:@"Its access is denied"
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                });
+            }
+        }];
+        
+        if (session.inputAvailable) {
+            
+            btn_play.enabled = NO;
+            
+            // Set the button's state to "stop"
+            btn_record.title = @"Stop";
+            
+            // Start the recorder
+            recorder->StartRecord(CFSTR("recordedFile.caf"));
+            
+            [self setFileDescriptionForFormat:recorder->DataFormat() withName:@"Recorded File"];
+            
+            // Hook the level meter up to the Audio Queue for the recorder
+            [lvlMeter_in setAq: recorder->Queue()];
+        }
+	}
 }
 
 #pragma mark AudioSession listeners
@@ -256,7 +315,9 @@ void propListener(	void *                  inClientData,
 	// Allocate our singleton instance for the recorder & player object
 	recorder = new AQRecorder();
 	player = new AQPlayer();
-		
+    
+    /*
+     * Code deprecated in iOS 7
 	OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, self);
 	if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", (int)error);
 	else 
@@ -282,6 +343,27 @@ void propListener(	void *                  inClientData,
 		error = AudioSessionSetActive(true); 
 		if (error) printf("AudioSessionSetActive (true) failed");
 	}
+     */
+    
+    try {
+        // an intance of AVAudioSession class
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        
+        // notification for interruption handler
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleInterruption:)
+                                                     name:AVAudioSessionInterruptionNotification
+                                                   object:session];
+        
+        // notification for route change handler
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleRouteChange:)
+                                                     name:AVAudioSessionRouteChangeNotification
+                                                   object:session];
+    } catch (CAXException e) {
+        char buf[256];
+        fprintf(stderr, "Error: %s (%s)\n", e.mOperation, e.FormatError(buf));
+    }
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackQueueStopped:) name:@"playbackQueueStopped" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackQueueResumed:) name:@"playbackQueueResumed" object:nil];
@@ -337,8 +419,21 @@ void propListener(	void *                  inClientData,
 
 - (void)enterForeground
 {
+    /*
+     * Code deprecated in iOS 7
     OSStatus error = AudioSessionSetActive(true);
     if (error) printf("AudioSessionSetActive (true) failed");
+     */
+
+    // activating AVAudioSession
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    NSError* error = nil;
+    [session setActive:YES error:&error];
+    if (error) {
+        NSLog(@"AVAudioSession setActitve:YES failed in enterForeground method");
+    }
+
+    
 	inBackground = false;
 }
 
