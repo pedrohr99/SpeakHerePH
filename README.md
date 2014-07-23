@@ -17,6 +17,9 @@ In summary in play method I set category for playback and the same way I set cat
 
 After I commented the deprecated code I get sample rate and number of channels using AVAudioSession in SetupAudioFormat method. In commit "Updated to iOS 7 with AVAudioSession" you can see the modified hunks.
 
+***
+
+WARNING: This example only work in iOS 7.0. It does not work in iOS 7.1 and later. This is only a simple example that I did when iOS 7.0 was released.
 
 ***
 

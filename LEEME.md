@@ -17,6 +17,9 @@ En resumen en el metodo play he asignado la categoría para playback y de igual 
 
 Después que he comentado el código obsoleto he adquirido la frecuencia de muestreo y el número de canales usando AVAudioSession en el método SetupAudioFormat. En el commit "Updated to iOS 7 with AVAudioSession" puedes ver la porción de código modificada.
 
+***
+
+ADVERTENCIA: Este ejemplo sólo funciona en iOS 7.0. No funciona en iOS 7.1 y posteriores. Este es sólo un ejemplo sencillo que hice cuando iOS 7.0 fue lanzado.
 
 ***
 
