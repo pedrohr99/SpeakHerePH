@@ -86,7 +86,7 @@ char *OSTypeToStr(char *buf, OSType t)
 {
 	char buf[5];
 	const char *dataFormat = OSTypeToStr(buf, format.mFormatID);
-	NSString* description = [[NSString alloc] initWithFormat:@"(%ld ch. %s @ %g Hz)", format.NumberChannels(), dataFormat, format.mSampleRate, nil];
+	NSString* description = [[NSString alloc] initWithFormat:@"(%u ch. %s @ %g Hz)", (unsigned int)(format.NumberChannels()), dataFormat, format.mSampleRate, nil];
 	fileDescription.text = description;
 	[description release];	
 }
@@ -136,11 +136,11 @@ char *OSTypeToStr(char *buf, OSType t)
         
         // it changes category for listen to track
         [session setCategory:AVAudioSessionCategoryPlayback error:&error];
-        XThrowIfError(error.code, "couldn't set playback audio category");
+        XThrowIfError((int)error.code, "couldn't set playback audio category");
         
         // the session must be active
         [session setActive:YES error:&error];
-        XThrowIfError(error.code, "couldn't set audio session active in playing\n");
+        XThrowIfError((int)error.code, "couldn't set audio session active in playing\n");
         
     } catch (CAXException e) {
         char buf[256];

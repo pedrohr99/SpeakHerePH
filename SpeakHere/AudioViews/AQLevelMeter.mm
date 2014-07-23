@@ -234,7 +234,7 @@ Copyright (C) 2012 Apple Inc. All Rights Reserved.
 		success = YES;
 	} else {
 		
-		UInt32 data_sz = sizeof(AudioQueueLevelMeterState) * [_channelNumbers count];
+		UInt32 data_sz = sizeof(AudioQueueLevelMeterState) * (UInt32)[_channelNumbers count];
 		OSErr status = AudioQueueGetProperty(_aq, kAudioQueueProperty_CurrentLevelMeterDB, _chan_lvls, &data_sz);
 		if (status != noErr) goto bail;
 
